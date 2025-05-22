@@ -46,9 +46,20 @@ if (ncol(llr_testing) == nrow(llr_testing)){
 	# comes from llr_computation.r
 	p0 = dpearson(llr_testing[,"llr"], moments=llr0_moments)
 	p1 = dpearson(llr_testing[,"llr"], moments=llr1_moments)
+
+	# for positions with both p0 and p1 == 0.0, these means that the values were extreme
+	# so find the direction of the extreme value and adapt
+	p1[which(p0==0.0 & p1==0.0)] = 0.0
+	p0[which(p0==0.0 & p1==0.0)] = 1.0
+
+	p1[which(llr_testing[,"llr"] > llr1_moments[1])] = 1.0
+	p0[which(llr_testing[,"llr"] > llr1_moments[1])] = 0.0
 }
 
 probas = round(p1/(p0+p1), 4)
+
+stopifnot(length(which(is.na(probas))) == 0)
+
 cat("Probas computed\n")
 
 #------------------------------------------------------------------------------#
