@@ -37,11 +37,20 @@ cat("LLR imported\n")
 #------------------------------------------------------------------------------#
 
 # COMPUTE PROBA
-# check if the data come frmo llr_computation.r or llr_computation_all_vs_all.r
+# check if the data come from llr_computation.r or llr_computation_all_vs_all.r
 if (ncol(llr_testing) == nrow(llr_testing)){ 
 	# comes from llr_computation_all_vs_all.r
 	p0 = dpearson(llr_testing, moments=llr0_moments)
 	p1 = dpearson(llr_testing, moments=llr1_moments)
+
+	# for positions with both p0 and p1 == 0.0, these means that the values were extreme
+	# so find the direction of the extreme value and adapt
+	p1[which(p0==0.0 & p1==0.0, arr.ind=T)] = 0.0
+	p0[which(p0==0.0 & p1==0.0, arr.ind=T)] = 1.0
+
+	p1[which(p1 == 0.0 & p0 == 0.0 & llr_testing > llr1_moments[1], arr.ind=T)] = 1.0
+	p0[which(p1 == 0.0 & p0 == 0.0 & llr_testing > llr1_moments[1], arr.ind=T)] = 0.0
+
 } else{ 
 	# comes from llr_computation.r
 	p0 = dpearson(llr_testing[,"llr"], moments=llr0_moments)
@@ -52,8 +61,8 @@ if (ncol(llr_testing) == nrow(llr_testing)){
 	p1[which(p0==0.0 & p1==0.0)] = 0.0
 	p0[which(p0==0.0 & p1==0.0)] = 1.0
 
-	p1[which(llr_testing[,"llr"] > llr1_moments[1])] = 1.0
-	p0[which(llr_testing[,"llr"] > llr1_moments[1])] = 0.0
+	p1[which(p1 == 0.0 & p0 == 0.0 & llr_testing[,"llr"] > llr1_moments[1])] = 1.0
+	p0[which(p1 == 0.0 & p0 == 0.0 & llr_testing[,"llr"] > llr1_moments[1])] = 0.0
 }
 
 probas = round(p1/(p0+p1), 4)
@@ -81,5 +90,4 @@ if (ncol(llr_testing) == nrow(llr_testing)){
 	write.table(output_df, file=out_gz, row.names=F, quote=F)
 	close(out_gz)
 }
-
 
