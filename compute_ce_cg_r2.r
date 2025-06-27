@@ -42,7 +42,8 @@ quantile_norm = function(x){
 merged_pgs_df_scaled = apply(merged_pgs_df[,-c('IID')], 2, quantile_norm)
 merged_pheno_df_scaled = apply(merged_pheno_df[,-c('IID')], 2, quantile_norm)
 
-cat(paste( apply(merged_pheno_df_scaled, 2, mean), apply(merged_pheno_df_scaled,2 , sd), apply(merged_pgs_df_scaled, 2, mean) , apply(merged_pgs_df_scaled,2 , sd) ), fill=TRUE, sep='\t')
+# uncomment for debugging
+#cat(paste( apply(merged_pheno_df_scaled, 2, mean), apply(merged_pheno_df_scaled,2 , sd), apply(merged_pgs_df_scaled, 2, mean) , apply(merged_pgs_df_scaled,2 , sd) ), fill=TRUE, sep='\t')
 
 cat("Data quantile normalized", fill=TRUE)
 
@@ -68,7 +69,7 @@ cat("correlation computed", fill=TRUE)
 #------------------------------------------------------------------------------#
 write_corr = function(df, out_p){
 	out_gz = gzfile(out_p, 'w')
-	write.table(df, file=out_gz, row.names=F, quote=F, col.names=F)
+	write.table(df, file=out_gz, row.names=F, quote=F, col.names=F, sep="\t")
 	close(out_gz)
 }
 write_corr(corr_mat_env, args$ce)
@@ -76,6 +77,6 @@ write_corr(corr_mat_pgs, args$cg)
 
 out_gz = gzfile(args$r2, 'w')
 output_df = data.frame(pheno=colnames(merged_pheno_df_scaled) , r2 = r2)
-write.table(output_df, file=out_gz, row.names=F, quote=F)
+write.table(output_df, file=out_gz, row.names=F, quote=F, sep='\t')
 close(out_gz)
 

@@ -24,9 +24,9 @@ args <- parser$parse_args()
 # Import data
 #------------------------------------------------------------------------------#
 
-r2 = read.table(args$r2,hea=T)$r2
-Ce = as.matrix(read.table(args$ce))
-Cg = as.matrix(read.table(args$cg))
+r2 = read.table(args$r2,hea=T, sep='\t')$r2
+Ce = as.matrix(read.table(args$ce), sep='\t')
+Cg = as.matrix(read.table(args$cg), sep='\t')
 cat("r2, Ce and Cg imported\n")
 
 #------------------------------------------------------------------------------#
