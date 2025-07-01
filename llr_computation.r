@@ -47,7 +47,8 @@ quantile_norm = function(x){
 merged_pgs_df_scaled = apply(merged_pgs_df[,-c('IID')], 2, quantile_norm)
 merged_pheno_df_scaled = apply(merged_pheno_df[,-c('IID')], 2, quantile_norm)
 
-cat(paste( apply(merged_pheno_df_scaled, 2, mean), apply(merged_pheno_df_scaled,2 , sd), apply(merged_pgs_df_scaled, 2, mean) , apply(merged_pgs_df_scaled,2 , sd) ), fill=TRUE, sep='\t')
+# debugging
+#cat(paste( apply(merged_pheno_df_scaled, 2, mean), apply(merged_pheno_df_scaled,2 , sd), apply(merged_pgs_df_scaled, 2, mean) , apply(merged_pgs_df_scaled,2 , sd) ), fill=TRUE, sep='\t')
 
 cat("Data quantile normalized", fill=TRUE)
 
