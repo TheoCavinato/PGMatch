@@ -15,6 +15,7 @@ parser <- ArgumentParser()
 parser$add_argument("--llr", help="Input LLR", required=T)
 parser$add_argument("--moments", help="Input moments", required=T)
 parser$add_argument("--probas", help="Output file for probabilities", required=T)
+parser$add_argument("--round", help="Number of digits to use when writing probabilities", type = "integer", default = 4, required=F)
 
 # Parse the args
 args <- parser$parse_args()
@@ -65,7 +66,7 @@ if (ncol(llr_testing) == nrow(llr_testing)){
 	p0[which(p1 == 0.0 & p0 == 0.0 & llr_testing[,"llr"] > llr1_moments[1])] = 0.0
 }
 
-probas = round(p1/(p0+p1), 4)
+probas = round(p1/(p0+p1), args$round)
 
 stopifnot(length(which(is.na(probas))) == 0)
 
