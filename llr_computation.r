@@ -16,6 +16,7 @@ parser$add_argument("--pgs", help = "Input pgs data frame", required = T)
 parser$add_argument("--r2", help="Input var explained for each phenotype", required=T)
 parser$add_argument("--ce", help="Input env correlaiton", required=T)
 parser$add_argument("--llr", help="Output path to LLR computed", required=T)
+parser$add_argument("--qnorm", help="T for True, F for False (optional)", required=F, default="T")
 
 # Parse the args
 args <- parser$parse_args()
@@ -44,10 +45,20 @@ quantile_norm = function(x){
     return(new_dist)
 }
 
-merged_pgs_df_scaled = apply(merged_pgs_df[,-c('IID')], 2, quantile_norm)
-merged_pheno_df_scaled = apply(merged_pheno_df[,-c('IID')], 2, quantile_norm)
+if(args$qnorm== 'T') {
+	cat("Running quantile normalization...\n")
+	merged_pgs_df_scaled = apply(merged_pgs_df[,-c('IID')], 2, quantile_norm)
+	merged_pheno_df_scaled = apply(merged_pheno_df[,-c('IID')], 2, quantile_norm)
+} else if(args$qnorm== 'F'){
+	cat("Passing quantile normalization...\n")
+	merged_pgs_df_scaled = merged_pgs_df[,-c('IID')]
+	merged_pheno_df_scaled = merged_pheno_df[,-c('IID')]
+} else{
+	stop("please provide --quantile_norm with a correct argument (either T or F) or do not specify it")
+}
 
 # debugging
+
 #cat(paste( apply(merged_pheno_df_scaled, 2, mean), apply(merged_pheno_df_scaled,2 , sd), apply(merged_pgs_df_scaled, 2, mean) , apply(merged_pgs_df_scaled,2 , sd) ), fill=TRUE, sep='\t')
 
 cat("Data quantile normalized", fill=TRUE)
