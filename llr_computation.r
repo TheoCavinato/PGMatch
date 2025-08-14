@@ -60,6 +60,7 @@ if(args$qnorm== 'T') {
 # debugging
 
 #cat(paste( apply(merged_pheno_df_scaled, 2, mean), apply(merged_pheno_df_scaled,2 , sd), apply(merged_pgs_df_scaled, 2, mean) , apply(merged_pgs_df_scaled,2 , sd) ), fill=TRUE, sep='\t')
+bfegziouebfi
 
 cat("Data quantile normalized", fill=TRUE)
 
