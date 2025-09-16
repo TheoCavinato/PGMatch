@@ -10,8 +10,8 @@ set.seed(1789)
 #------------------------------------------------------------------------------#
 
 # input
-r2 = c(0.5, 0.4, 0.3, 0.2, 0.1)
-n=5*1e2
+r2 = runif(10)
+n=5*1e3
 r=sqrt(r2)
 n_pheno = length(r2)
 Cg <- cov2cor(crossprod(matrix(rnorm(n_pheno^2), nrow = n_pheno)))

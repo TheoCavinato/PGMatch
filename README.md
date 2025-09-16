@@ -74,7 +74,9 @@ Rscript llr_computation.r --pgs Example_data/genome_pgs.tsv \
     --ce Example_output/ce.tsv.gz \
     --llr Example_output/llr.individual_x_genome.tsv.gz
 ```
+
 and then convert it to a probability of a match:
+
 ```bash
 Rscript llr2probas.r --llr Example_output/llr.individual_x_genome.tsv.gz \
     --moments Example_output/moments.tsv \
