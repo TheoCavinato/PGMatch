@@ -1,8 +1,9 @@
 # Re-identification by polygenic predictions
 
-Code supporting the paper entitled "Assessing the real threat of re-identification by polygenic predictions". \
+Code supporting the paper entitled "Assessing the real threat of genome re-identification by polygenic predictions". \
 The main directory contains the scripts an attacker could use to re-identify a genome.
 The **Analysis/** directory contains the scripts we used to perform the analyses reported in the paper.
+The R scripts in the repository root together form the PGMatch software described in the paper.
 
 ## Quickstart
 Here is a step-by-step explanation of how our method works based on an example dataset.
