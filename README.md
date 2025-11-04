@@ -1,4 +1,4 @@
-# PGMatch (Phenotype-Genotype Match using polyggenic scores)
+# PGMatch (Phenotype-Genotype Match using polygenic scores)
 
 Code supporting the paper entitled "Assessing the real threat of genome re-identification by polygenic predictions".
 The main directory contains the scripts an attacker could use to re-identify a genome.
