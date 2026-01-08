@@ -5,9 +5,31 @@ The main directory contains the scripts an attacker could use to re-identify a g
 These R scripts together form the **PGMatch** software described in the paper.
 The **Analysis/** directory contains the scripts we used to perform the analyses reported in the paper.
 
+## Dependencies
+PGMatch require R (>4.0.0) and is platform-independent.
+It can be run on any operating system that supports R.
+PGMatch requires the following dependencies:
+* argparse
+* corpcor
+* data.table
+* MASS
+* moments
+* mvtnorm
+* PearsonDS
+Installing these dependencies should take a few minutes.
+
+The scripts have been tested on R version 4.1.1 with the following dependency versions:
+* argparse v2.2.5
+* corpcor v1.6.10
+* data.table v1.16.4
+* MASS v7.3-61 
+* moments v0.14.1
+* mvtnorm v1.3-2
+* PearsonDS v1.3.1
+
 ## Quickstart
 Here is a step-by-step explanation of how our method works based on an example dataset.
-To try it, please first install the following **dependencies** in R:
+The following example code should take less than a minute to run.
 ``` install.packages("argparse", "corpcor", "data.table", "MASS", "moments", "mvtnorm", "PearsonDS") ```
 
 ### Example dataset
@@ -86,6 +108,7 @@ Rscript llr2probas.r --llr Example_output/llr.individual_x_genome.tsv.gz \
 ```
 
 The probability that *I* and *G* belong to the same individual is stored in **Example_output/probas.individual_x_genome.tsv.gz**.
+In this example, the probability written in this file should be close to 1.
 
 
 ## Scripts
