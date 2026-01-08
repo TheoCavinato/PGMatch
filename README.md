@@ -15,7 +15,8 @@ PGMatch requires the following dependencies:
 * MASS
 * moments
 * mvtnorm
-* PearsonDS \
+* PearsonDS 
+
 Installing these dependencies should take a few minutes.
 
 The scripts have been tested on R version 4.1.1 with the following dependency versions:
