@@ -59,7 +59,7 @@ cat("Data quantile normalized", fill=TRUE)
 n_ind = nrow(merged_pgs_df_scaled)
 n_pheno = ncol(merged_pgs_df_scaled)
 
-llr_mat = sapply(c(1:n_ind), function(t_idx){
+llr_mat = t(sapply(c(1:n_ind), function(t_idx){
 	pheno_t = matrix(rep(merged_pheno_df_scaled[t_idx,], n_ind), nrow=n_ind, byrow=T)
 	diff_mat_test = pheno_t - as.matrix(merged_pgs_df_scaled)%*%diag(sqrt(r2))
 	p0_test = dmvnorm(pheno_t ,mean=rep(0,n_pheno),sigma=corr_mat_env,log = TRUE)
@@ -67,7 +67,7 @@ llr_mat = sapply(c(1:n_ind), function(t_idx){
 	llr_test = p1_test  - p0_test
 	if(t_idx%%1e3 ==0) {cat(t_idx, "individuals done\n")}
 	return(round(llr_test, 4))
-})
+}))
 
 cat("LLR computed", fill=TRUE)
 cat("Mean diag", mean(diag(llr_mat)), "\n")
