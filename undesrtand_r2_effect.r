@@ -22,6 +22,20 @@ X = PRS + E %*% diag(sqrt(1-r2))
 apply(E %*% diag(sqrt(1-r2)), 2, var) + r2 # should be close to one everywhere
 apply(X, 2, var)  # should be close to 1
 
+
+r2_hat <- apply(PRS, 2, var)          # Var(PRS_j) = r2_j since Var(X)=1
+residual <- X - PRS                    # = E * sqrt(1 - r2)
+E_hat <- residual / sqrt(1 - r2_hat)  # recovers E up to scaling
+
+# Verify: correlation of recovered E with X should be sqrt(1 - r2)
+cor_EX <- cor(E_hat, X)
+residual <- X - PRS                        # n x n_pheno matrix = E * diag(sqrt(1-r2))
+r2_hat   <- apply(PRS, 2, var)            # estimate r2 from data
+E_hat    <- sweep(residual, 2, sqrt(1 - r2_hat), "/")  # recover E
+
+cor_E <- cor(E_hat)                        # n_pheno x n_pheno correlation matrix
+cor_EX_theoretical <- sqrt(1 - r2_hat)
+
 cat("Computing LLR:\n")
 compute_llr = function(X, PRS, r2, corr_mat_env) {
 	scaled_PRS = scale(PRS)
