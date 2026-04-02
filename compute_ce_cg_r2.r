@@ -60,8 +60,7 @@ cat("variance explained computed", fill=TRUE)
 #------------------------------------------------------------------------------#
 corr_mat = cor(merged_pheno_df_scaled, use="pairwise.complete.obs") # get C
 corr_mat_pgs = cor(merged_pgs_df_scaled, use="pairwise.complete.obs") # get Cg
-corr_mat_env = cov2cor(cov(merged_pheno_df_scaled) - cov(as.matrix(merged_pgs_df_scaled)%*%diag(sqrt(r2)))) # get Ce
-corr_mat_env=make.positive.definite(corr_mat_env, tol=1e-3)
+corr_mat_env = cor(merged_pheno_df_scaled - merged_pgs_df_scaled, use = "pairwise.complete.obs")
 cat("correlation computed", fill=TRUE)
 
 #------------------------------------------------------------------------------#
