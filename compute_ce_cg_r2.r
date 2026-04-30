@@ -16,6 +16,7 @@ parser$add_argument("--pgs", help = "Input pgs data frame", required = T)
 parser$add_argument("--ce", help="Output path for env correlation", required=T)
 parser$add_argument("--cg", help="Output path for pgs correlation", required=T)
 parser$add_argument("--r2", help="Output path to var explained for each phenotype", required=T)
+parser$add_argument("--qnorm", help="T for True, F for False (optional)", required=F, default="T")
 
 # Parse the args
 args <- parser$parse_args()
@@ -39,8 +40,15 @@ quantile_norm = function(x){
     return(new_dist)
 }
 
+if(args$qnorm== 'T') {
 merged_pgs_df_scaled = apply(merged_pgs_df[,-c('IID')], 2, quantile_norm)
 merged_pheno_df_scaled = apply(merged_pheno_df[,-c('IID')], 2, quantile_norm)
+} else if(args$qnorm== 'F'){
+merged_pgs_df_scaled = data.frame(merged_pgs_df[,-c('IID')])
+merged_pheno_df_scaled = data.frame(merged_pheno_df[,-c('IID')])
+} else{
+	stop("please provide --quantile_norm with a correct argument (either T or F) or do not specify it")
+}
 
 # uncomment for debugging
 #cat(paste( apply(merged_pheno_df_scaled, 2, mean), apply(merged_pheno_df_scaled,2 , sd), apply(merged_pgs_df_scaled, 2, mean) , apply(merged_pgs_df_scaled,2 , sd) ), fill=TRUE, sep='\t')
