@@ -135,8 +135,8 @@ The following folders each correspond to an analysis in the paper:
 - **Effect_of_prior**: re-assessment of precision-recall taking into account prior probabilities.
 - **Sensitive_haplotypes_inference**: inference of whether individuals carry the different haplotypes using re-identification by phenotypic prediction + assessment of wheter an individual is part of a biobank.
 - **Idfx_vs_pgmatch_mem_time**: comparison of IDEFIX with our method in terms of memory and time.
-- **Idfx_vs_pgmatch_ce_cg_effect**: comparison of IDEFIX with our method in depending on the correlation between phenotypes.
-- **Idfx_vs_pgmatch_r2_effect**: comparison of IDEFIX with our method in depending on the variance explained by genetics in phenotypes.
-- **Idfx_vs_pgmatch_prior**: comparison of IDEFIX with our method in depending taking into account priors.
+- **Idfx_vs_pgmatch_ce_cg_effect**: comparison of IDEFIX with our method depending on the correlation between phenotypes.
+- **Idfx_vs_pgmatch_r2_effect**: comparison of IDEFIX with our method depending on the variance explained by genetics in phenotypes.
+- **Idfx_vs_pgmatch_prior**: comparison of IDEFIX with our method taking into account priors.
 
 The code in the folder **Compute_variance_explained** and **LDSC** was used to generate necessary data for the analysis.
