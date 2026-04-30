@@ -28,7 +28,7 @@ The scripts have been tested on R version 4.1.1 with the following dependency ve
 Here is a step-by-step explanation of how our method works based on an example dataset.
 The following example code should take less than a minute to run.
 To easily install the dependencies all at once:
-``` install.packages("argparse", "corpcor", "data.table", "MASS", "mvtnorm") ```
+``` install.packages("argparse", "corpcor", "data.table", "MASS", "mvtnorm", "R.utils") ```
 
 ### Example dataset
 Our paper aims to assess whether re-identification by phenotypic prediction is possible in realistic scenarios.
