@@ -20,13 +20,12 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-
-
 library("PearsonDS")
 library("mvtnorm")
 library("moments")
 library("MASS")
 library("argparse")
+library("data.table")
 
 #------------------------------------------------------------------------------#
 # Parameters
@@ -39,7 +38,10 @@ parser <- ArgumentParser()
 parser$add_argument("--r2", help = "Input r2", required = T)
 parser$add_argument("--ce", help = "Input env corr", required = T)
 parser$add_argument("--cg", help = "Input pgs corr", required = T)
-parser$add_argument("--moments", help = "Output path for moments", required = T)
+parser$add_argument("--n_sim", help = "Number of simulations to perform", required = T, type="integer")
+
+parser$add_argument("--llr_h1", help = "Output path for llr H0", required = T)
+parser$add_argument("--llr_h0", help = "Output path for llr H1", required = T)
 
 # Parse the args
 args <- parser$parse_args()
@@ -56,7 +58,7 @@ cat("r2, Ce and Cg imported\n")
 #------------------------------------------------------------------------------#
 # Derive moments from r2, Ce and Cg
 #------------------------------------------------------------------------------#
-n=5*1e5
+n=args$n_sim
 r=sqrt(r2)
 n_pheno = length(r2)
 
@@ -78,15 +80,11 @@ p1_H1 = dmvnorm(d1,mean=rep(0,n_pheno),sigma=diag(sqrt(1-r2))%*%Ce%*%diag(sqrt(1
 llr0_training = p1_H0-p0_H0
 llr1_training = p1_H1-p0_H1
 
-# COMPUTE MOMENTS
-llr0_moments = c(mean(llr0_training), var(llr0_training), skewness(llr0_training), kurtosis(llr0_training))
-llr1_moments = c(mean(llr1_training), var(llr1_training), skewness(llr1_training), kurtosis(llr1_training))
-cat("Moments computed\n")
-
 #------------------------------------------------------------------------------#
 # Write result
 #------------------------------------------------------------------------------#
 # output moments in order to plot them at the end
-cat(llr1_moments, sep='\t', file=args$moment, fill=T)
-cat(llr0_moments, sep='\t', file=args$moment, fill=T, append=T)
+
+fwrite( data.table(IID=c(1:length(llr0_training)), llr=llr0_training),args$llr_h0, sep="\t")
+fwrite( data.table(IID=c(1:length(llr1_training)), llr=llr1_training),args$llr_h1, sep="\t")
 

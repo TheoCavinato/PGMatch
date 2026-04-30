@@ -15,7 +15,6 @@ PGMatch requires the following dependencies:
 * MASS
 * moments
 * mvtnorm
-* PearsonDS 
 
 Installing these dependencies should take a few minutes.
 
@@ -26,13 +25,12 @@ The scripts have been tested on R version 4.1.1 with the following dependency ve
 * MASS v7.3-61 
 * moments v0.14.1
 * mvtnorm v1.3-2
-* PearsonDS v1.3.1
 
 ## Quickstart
 Here is a step-by-step explanation of how our method works based on an example dataset.
 The following example code should take less than a minute to run.
 To easily install the dependencies all at once:
-``` install.packages("argparse", "corpcor", "data.table", "MASS", "moments", "mvtnorm", "PearsonDS") ```
+``` install.packages("argparse", "corpcor", "data.table", "MASS", "moments", "mvtnorm") ```
 
 ### Example dataset
 Our paper aims to assess whether re-identification by phenotypic prediction is possible in realistic scenarios.

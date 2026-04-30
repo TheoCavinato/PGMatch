@@ -2,7 +2,6 @@ suppressPackageStartupMessages(library(R.utils))
 library(data.table)
 library(argparse)
 library(mvtnorm)
-library(PearsonDS)
 
 #------------------------------------------------------------------------------#
 # Parameters
