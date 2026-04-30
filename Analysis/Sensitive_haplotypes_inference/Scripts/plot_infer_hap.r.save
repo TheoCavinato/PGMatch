@@ -1,0 +1,175 @@
+library(data.table)
+library(ggpubr)
+library(ggplot2)
+library(PRROC)
+
+#------------------------------------------------------------------------------#
+# Parameters
+#------------------------------------------------------------------------------#
+
+# input
+#hap_ori_p = "/data/FAC/FBM/DBC/zkutalik/default_sensitive/tcavinat/Phenotype_inference_attack/Apoe_inference/All_haplotypes/all_haplotypes.merged.tsv.gz"
+#sup_hap_inf_p = "/data/FAC/FBM/DBC/zkutalik/default_sensitive/tcavinat/Phenotype_inference_attack/Apoe_inference/Inference_results/hap_inf.sup.tsv"
+#unsup_hap_inf_p = "/data/FAC/FBM/DBC/zkutalik/default_sensitive/tcavinat/Phenotype_inference_attack/Apoe_inference/Inference_results/hap_inf.unsup.tsv"
+#pgs_p ="/scratch/tcavinat/Phenotype_inference_attack/Sensitive_haplotypes_inference/Nbr_pheno_40//Datasets/pgs.test.sup_scaled.tsv" # just for IID order
+
+plot_folder = "/data/FAC/FBM/DBC/zkutalik/default_sensitive/tcavinat/Phenotype_inference_attack/Plot_data/Sensitive_haplotypes_inference/"
+hap_ori_p = paste0(plot_folder, "all_haplotypes.merged.tsv.gz")
+sup_hap_inf_p = paste0(plot_folder, "hap_inf.sup.itr_1.tsv.gz")
+unsup_hap_inf_p = paste0(plot_folder, "hap_inf.unsup.tsv")
+#pgs_p  = paste0(plot_folder, "pgs.test.sup_scaled.tsv")
+pgs_p  =  "/scratch/tcavinat/Phenotype_inference_attack/Sensitive_haplotypes_inference/Nbr_pheno_40/itr_1/Datasets/pgs.test.sup_scaled.tsv"
+# just for IID order
+
+
+# output
+pdf_folder = "/scratch/tcavinat/Phenotype_inference_attack/Sensitive_haplotypes_inference/Plots/"
+
+#------------------------------------------------------------------------------#
+# Import data
+#------------------------------------------------------------------------------#
+
+hap_ori_dt = fread(hap_ori_p)[, c("IID", "APOE","ABO","FUT2","LCT","DQB1_602")]
+#hap_ori_dt[, APOE := as.integer(grepl("e4", hap_ori_dt$APOE))]
+#hap_ori_dt[, ABO := as.integer("OO" == ABO)]
+#hap_ori_dt[, FUT2 := as.integer(FUT2 >= 1)]
+hap_ori_dt[, APOE := factor(as.integer(grepl("e4", hap_ori_dt$APOE)), levels=c(0,1))]
+hap_ori_dt[, ABO := factor(as.integer("OO" == ABO), levels=c(0,1))]
+hap_ori_dt[, FUT2 := factor(as.integer(FUT2 >= 1), levels=c(0,1))]
+hap_ori_dt[, LCT := factor(as.integer(LCT >= 1), levels=c(0,1))]
+hap_ori_dt[, DQB1_602 := factor(as.integer(DQB1_602 >= 1), levels=c(0,1))]
+
+sup_hap_inf_dt = fread(sup_hap_inf_p)
+sup_hap_inf_dt$IID = fread(pgs_p)$IID[c(1:1000)]
+unsup_hap_inf_dt = fread(unsup_hap_inf_p)
+unsup_hap_inf_dt$IID = fread(pgs_p)$IID[c(1:1000)]
+
+#stopifnot(ncol(unsup_hap_inf_dt) == ncol(hap_ori_dt))
+#stopifnot(ncol(sup_hap_inf_dt) == ncol(hap_ori_dt))
+
+merge_sup_dt = merge(sup_hap_inf_dt, hap_ori_dt, by="IID", suffixes= c("_inf", "_ori"))
+merge_unsup_dt = merge(unsup_hap_inf_dt, hap_ori_dt, by="IID", suffixes= c("_inf", "_ori"))
+
+#------------------------------------------------------------------------------#
+# Make plot
+#------------------------------------------------------------------------------#
+
+# Violin plot
+violin_plot = function(df, cur_title, haplotype = "APOE"){
+  ori_col <- paste0(haplotype, "_ori")
+  inf_col <- paste0(haplotype, "_inf")
+
+  stat.test <- compare_means(
+    as.formula(paste0(inf_col, " ~ ", ori_col)),
+    df,
+    method = "t.test",
+    alternative = "greater"
+  )
+  stat.test$y.position <- max(df[[inf_col]], na.rm = TRUE) * 1.05
+
+  p = ggplot(df, aes(x = as.factor(.data[[ori_col]]), y = .data[[inf_col]])) +
+    geom_violin(fill = "grey") +
+    geom_boxplot(outlier.shape = NA) +
+    stat_pvalue_manual(stat.test, label = "p.format") +
+    #ylab(bquote(Pr(.(haplotype)))) +
+    ylab(expression(Pr(APOE-epsilon[4]))) +
+    theme_bw() +
+    labs(title = cur_title, x = "") +
+    scale_x_discrete(labels = c(
+      #"0" = paste0(haplotype, " non-carriers"),
+      #"1" = paste0(haplotype, " carriers"))) +
+      "0" = bquote(epsilon[4] ~ "non-carriers"),
+      "1" = bquote(epsilon[4] ~ "carriers"))) +
+    theme(plot.title = element_text(hjust = 0.5, face = "bold"))
+  return(p)
+}
+
+# precision recall plot with bootstrap confidence intervals
+precrec_plot = function(df, cur_title, haplotype = "APOE", n_boot = 100, conf = 0.95){
+  ori_col <- paste0(haplotype, "_ori")
+  inf_col <- paste0(haplotype, "_inf")
+
+  # --- observed curve ---
+  pr <- pr.curve(
+    scores.class1 = subset(df, df[[ori_col]] == 0)[[inf_col]],
+    scores.class0 = subset(df, df[[ori_col]] == 1)[[inf_col]],
+    curve = TRUE)
+  pr_df = pr$curve
+  colnames(pr_df) = c("Recall", "Precision", "Threshold")
+
+  # --- bootstrap ---
+  recall_grid <- seq(0, 1, length.out = 100)
+  boot_mat <- matrix(NA, nrow = n_boot, ncol = length(recall_grid))
+
+  for(i in seq_len(n_boot)){
+    boot_idx <- sample(nrow(df), replace = TRUE)
+    boot_df  <- df[boot_idx, ]
+
+    if(length(unique(boot_df[[ori_col]])) < 2) next
+
+    pr_boot <- tryCatch(
+      pr.curve(
+        scores.class1 = subset(boot_df, boot_df[[ori_col]] == 0)[[inf_col]],
+        scores.class0 = subset(boot_df, boot_df[[ori_col]] == 1)[[inf_col]],
+        curve = TRUE),
+      error = function(e) NULL)
+
+    if(is.null(pr_boot)) next
+
+    boot_curve <- pr_boot$curve
+    colnames(boot_curve) <- c("Recall", "Precision", "Threshold")
+
+    boot_mat[i, ] <- approx(
+      x    = boot_curve[, "Recall"],
+      y    = boot_curve[, "Precision"],
+      xout = recall_grid,
+      rule = 2)$y
+  }
+
+  alpha <- 1 - conf
+  ribbon_df <- data.frame(
+    Recall = recall_grid,
+    lower  = apply(boot_mat, 2, quantile, probs = alpha/2,     na.rm = TRUE),
+    upper  = apply(boot_mat, 2, quantile, probs = 1 - alpha/2, na.rm = TRUE)
+  )
+  message("First row of prec rec for hap", haplotype, ":")
+	print(pr_df[1,])
+
+  # --- plot ---
+  p <- ggplot(pr_df, aes(x = Recall, y = Precision)) +
+    geom_ribbon(
+      data = ribbon_df,
+      aes(x = Recall, ymin = lower, ymax = upper),
+      inherit.aes = FALSE,
+      fill  = "grey",
+      alpha = 0.5) +
+    geom_line(colour = "black", linewidth = 0.8) +
+    theme_bw() +
+    xlim(c(0, 1)) +
+    ylim(0, 1) +
+    theme(
+      legend.position   = c(0.2, 0.2),
+      legend.background = element_rect(color = "black"),
+      legend.title      = element_text(margin = margin(r = 10)),
+      plot.title        = element_text(hjust = 0.5, face = "bold")) +
+    labs(title = cur_title)
+  return(p)
+}
+
+# --- APOE plots (default) ---
+plot_haplotype = function(cur_hap){
+	p_violin_sup    = violin_plot(merge_sup_dt,   "Supervised",   haplotype = cur_hap)
+	p_violin_unsup  = violin_plot(merge_unsup_dt, "Unsupervised", haplotype = cur_hap)
+	p_precrec_sup   = precrec_plot(merge_sup_dt,   "Supervised",   haplotype = cur_hap)
+	p_precrec_unsup = precrec_plot(merge_unsup_dt, "Unsupervised", haplotype = cur_hap)
+
+	p_final = ggarrange(p_violin_sup, p_violin_unsup, p_precrec_sup, p_precrec_unsup,
+          ncol = 2, nrow = 2, labels = "AUTO")
+	ggsave(paste0(pdf_folder, cur_hap, ".pdf"), width = 10, height = 10)
+}
+plot_haplotype("APOE")
+plot_haplotype("ABO")
+plot_haplotype("LCT")
+plot_haplotype("FUT2")
+plot_haplotype("DQB1_602")
+

@@ -130,10 +130,13 @@ In this example, the probability written in this file should be close to 1.
 
 ## Analysis
 The following folders each correspond to an analysis in the paper:
-- **Precision_recall_per_phenotype**: assessment of the precision-recall of our method.
-- **Realistic_scenario**: re-assessment of preicision-recall in a realistic scenario.
-- **Apoe_inference**: inference of whether individuals carry the APOE-e4 haplotype using re-identification by phenotypic prediction.
-- **Comparison_idefix**: comparison of IDEFIX with our method.
-- **Participation**: inference of whether an individual was part of a biobank using re-identification by phenotypic prediction.
+- **Effect_of_pheno_nbr**: assessment of the precision-recall of our method depending on the number of phenotypes.
+- **Effect_of_pheno_nbr_no_BMI**: assessment of the precision-recall of our method depending on the number of phenotypes when BMI and reticulocyte count are not taken into account.
+- **Effect_of_prior**: re-assessment of precision-recall taking into account prior probabilities.
+- **Sensitive_haplotypes_inference**: inference of whether individuals carry the different haplotypes using re-identification by phenotypic prediction + assessment of wheter an individual is part of a biobank.
+- **Idfx_vs_pgmatch_mem_time**: comparison of IDEFIX with our method in terms of memory and time.
+- **Idfx_vs_pgmatch_ce_cg_effect**: comparison of IDEFIX with our method in depending on the correlation between phenotypes.
+- **Idfx_vs_pgmatch_r2_effect**: comparison of IDEFIX with our method in depending on the variance explained by genetics in phenotypes.
+- **Idfx_vs_pgmatch_prior**: comparison of IDEFIX with our method in depending taking into account priors.
 
 The code in the folder **Compute_variance_explained** and **LDSC** was used to generate necessary data for the analysis.
