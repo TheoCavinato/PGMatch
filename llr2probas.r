@@ -52,7 +52,7 @@ cat("Probas computed\n")
 # Write probabilities
 #------------------------------------------------------------------------------#
 
-output_df = data.frame(IID=llr_testing[,"IID"], Proba=probas_H1)
+output_df = data.frame(IID=llr_testing[,"IID"], Proba=round(probas_H1, args$round))
 cat("Mean proba :",mean(output_df$Proba),"\n")
 out_gz = gzfile(args$probas, 'w')
 write.table(output_df, file=out_gz, row.names=F, quote=F)

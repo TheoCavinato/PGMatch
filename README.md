@@ -80,12 +80,6 @@ Rscript llr_computation.r --pgs Example_data/biobank_pgs.shuf.tsv \
     --llr Example_output/llr.h0.tsv.gz
 
 ```
-Then, they can estimate these distributions:
-```bash
-Rscript moments_supervised.r --llr_h0 Example_output/llr.h0.tsv.gz \
-    --llr_h1 Example_output/llr.h1.tsv.gz \
-    --moments Example_output/moments.tsv
-```
 
 ### 3. Apply the model
 Now, the malicious attacker can assess whether *G* and *I* belong to the same person by first computing their LLR:
@@ -101,8 +95,9 @@ Rscript llr_computation.r --pgs Example_data/genome_pgs.tsv \
 and then converting it into a probability of a match:
 
 ```bash
-Rscript llr2probas.r --llr Example_output/llr.individual_x_genome.tsv.gz \
-    --moments Example_output/moments.tsv \
+Rscript llr2probas.r --llr_test Example_output/llr.individual_x_genome.tsv.gz \
+    --llr_h0 Example_output/llr.h0.tsv.gz \
+    --llr_h1 Example_output/llr.h1.tsv.gz \
     --probas Example_output/probas.individual_x_genome.tsv.gz \
     --round 10
 ```
@@ -127,19 +122,6 @@ In this example, the probability written in this file should be close to 1.
     * *--pheno* Input matrix of phenotypes. Format described in **compute_ce_cg_r2.r**.
     * *--pgs* Input matrix of polygenic scores. Format described in **compute_ce_cg_r2.r**.
     * *--llr* Output path for the computed LLR. Matrix of #individuals rows and two columns: "IID" (individual ID) and "llr" (log-likelihood ratios).
-
-- **moments_supervised.r** \
-    Computes the moments of the LLR distribution (model training) using the **supervised approach** described in the paper.
-    * *--llr_h1* LLR computed between a *--pheno* matrix and a *--pgs* matrix where IDs per row match.
-    * *--llr_h0* LLR computed between a *--pheno* matrix and a *--pgs* matrix where IDs per row differ.
-    * *--moments* Output path for the estimated moments of the LLR distribution under H0 and H1.
-
-- **moments_unsupervised.r** \
-    Computes the moments of the LLR distribution (model training) using the **unsupervised approach** described in the paper.
-    * *--r2* Input variance explained for each phenotype.
-    * *--ce* Input environmental correlation between the phenotypes.
-    * *--cg* Input genetic correlation between the phenotypes.
-    * *--moments* Output path for the estimated moments of the distribution of LLR under H0 and H1.
 
 - **llr2probas.r** \
     Converts LLR into the probability of a match (Pr(G=I | LLR), as described in the paper).
