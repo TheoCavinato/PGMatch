@@ -13,7 +13,6 @@ PGMatch requires the following dependencies:
 * corpcor
 * data.table
 * MASS
-* moments
 * mvtnorm
 
 Installing these dependencies should take a few minutes.
@@ -23,14 +22,13 @@ The scripts have been tested on R version 4.1.1 with the following dependency ve
 * corpcor v1.6.10
 * data.table v1.16.4
 * MASS v7.3-61 
-* moments v0.14.1
 * mvtnorm v1.3-2
 
 ## Quickstart
 Here is a step-by-step explanation of how our method works based on an example dataset.
 The following example code should take less than a minute to run.
 To easily install the dependencies all at once:
-``` install.packages("argparse", "corpcor", "data.table", "MASS", "moments", "mvtnorm") ```
+``` install.packages("argparse", "corpcor", "data.table", "MASS", "mvtnorm") ```
 
 ### Example dataset
 Our paper aims to assess whether re-identification by phenotypic prediction is possible in realistic scenarios.
