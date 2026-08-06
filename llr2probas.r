@@ -16,6 +16,7 @@ parser$add_argument("--llr_h0", help="Input H0 LLR (from training)", required=T)
 parser$add_argument("--llr_h1", help="Input H1 LLR (from training)", required=T)
 parser$add_argument("--probas", help="Output file for probabilities", required=T)
 parser$add_argument("--round", help="Number of digits to use when writing probabilities", type = "integer", default = 4, required=F)
+parser$add_argument("--prior", help="Prior probability of a match", type = "double", default = .5, required=F)
 
 # Parse the args
 args <- parser$parse_args()
@@ -43,8 +44,8 @@ dens_H1 <- density(llr1_training$llr)
 # NOTE: NEED TO ADD THE CASE WHERE THE DATA IS COMING FROM llr_computation_all_vs_all.r
 predicted_density_H0 <- approx(dens_H0$x, dens_H0$y, llr_testing$llr, rule=2)$y
 predicted_density_H1 <- approx(dens_H1$x, dens_H1$y, llr_testing$llr, rule=2)$y
-probas_H0 = predicted_density_H0 / (predicted_density_H0 + predicted_density_H1)
-probas_H1 = predicted_density_H1 / (predicted_density_H0 + predicted_density_H1)
+probas_H0 = (1-args$prior) * predicted_density_H0 / ((1-args$prior) * predicted_density_H0 + (args$prior) * predicted_density_H1)
+probas_H1 = args$prior * predicted_density_H1 / ((1-args$prior) * predicted_density_H0 + (args$prior) * predicted_density_H1)
 stopifnot(all(round(probas_H0 + probas_H1, 5) == 1))
 cat("Probas computed\n")
 
