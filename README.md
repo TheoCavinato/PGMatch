@@ -127,7 +127,8 @@ In this example, the probability written in this file should be close to 1.
     * *--llr* LLR computed between a *--pheno* matrix and a *--pgs* matrix of people suspected matches.
     * *--probas* Output file for probabilities.
     * *--round (optional)* Number of digits to use in the *--probas* file.
-
+    * *--prior (optional)* Specify the assumed prior probability that G = I when calculating Pr(G = I | LLR).
+      
 ## Analysis
 The following folders each correspond to an analysis in the paper:
 - **Effect_of_pheno_nbr**: assessment of the precision-recall of our method depending on the number of phenotypes.
