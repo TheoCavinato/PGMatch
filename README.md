@@ -1,6 +1,6 @@
 # PGMatch (Phenotype-Genotype Match using polygenic scores)
 
-Code supporting the paper entitled "Assessing the real threat of genome re-identification by polygenic predictions".
+Code supporting the paper entitled "Evaluating anonymized genome re-identification using polygenic predictions and its implications for data privacy".
 The main directory contains the scripts an attacker could use to re-identify a genome.
 These R scripts together form the **PGMatch** software described in the paper.
 The **Analysis/** directory contains the scripts we used to perform the analyses reported in the paper.
